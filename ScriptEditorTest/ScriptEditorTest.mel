@@ -64,14 +64,10 @@ move 0 13.4 3.9;
 // Hat
 // Create the brim of the hat
 polyCylinder -r $brimRadius -h $brimHeight -sx $subdivisions -sy 1 -name "Brim";
-
-// Move the brim to the correct position
 move -r 0 ($brimHeight / 2) 0;
 
 // Create the crown of the hat
 polyCylinder -r $crownRadius -h $crownHeight -sx $subdivisions -sy 1 -name "Crown";
-
-// Move the crown on top of the brim
 move -r 0 ($brimHeight + ($crownHeight / 2)) 0;
 
 // Combine the brim and crown into a single mesh
