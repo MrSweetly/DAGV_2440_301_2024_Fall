@@ -1,0 +1,81 @@
+// Parameters
+float $brimRadius = 2;
+float $brimHeight = 0.3;
+float $crownRadius = 1.5;
+float $crownHeight = 2;
+float $armLength = 5;
+float $armRadius = 0.2;
+int $subdivisions = 18;
+
+// Snowman
+// Create the body
+polySphere -r 6 -sx $subdivisions -sy $subdivisions -name "Belly";
+move 0 6 0;
+
+polySphere -r 4 -sx $subdivisions -sy $subdivisions -name "Chest";
+move 0 14 0;
+
+polySphere -r 2 -sx $subdivisions -sy $subdivisions -name "Head";
+move 0 19 0;
+
+// Create arms
+// Left arm
+polyCylinder -r $armRadius -h $armLength -sx 8 -name "L_Arm";
+move 4.6 14 1.8;
+rotate -31 -26 54;
+
+// Right arm
+polyCylinder -r $armRadius -h $armLength -sx 8 -name "L_Arm";
+move -4.6 14 1.8;
+rotate -31 26 -54;
+
+// Create the eyes
+// Right eye
+polySphere -r 0.4 -sx $subdivisions -sy $subdivisions -name "R_Eye";
+move -0.6 19.9 1.5;
+
+// Left eye
+polySphere -r 0.4 -sx $subdivisions -sy $subdivisions -name "L_Eye";
+move 0.6 19.9 1.5;
+
+// Create the nose
+polyCone -r 0.5 -h 2 -sx $subdivisions -sy $subdivisions -name "Nose";
+rotate 90 0 90;
+move 0 19.2 2.5;
+
+// Create the mouth
+float $mouthOffset = 1.2;
+for ($i = -2; $i <= 2; $i++) {
+    polySphere -r 0.25 -sx $subdivisions -sy $subdivisions -name "Mouth_Pt";
+    float $yPos = 18.5 + 0.1 * pow($i, 2);
+    move ($i * 0.5) $yPos (2 - abs($i) * 0.1);
+}
+
+// Add buttons on the chest
+polySphere -r 0.6 -sx $subdivisions -sy $subdivisions -name "Button";
+move 0 16.67 3;
+
+polySphere -r 0.6 -sx $subdivisions -sy $subdivisions -name "Button";
+move 0 15.15 3.7;
+
+polySphere -r 0.6 -sx $subdivisions -sy $subdivisions -name "Button";
+move 0 13.4 3.9;
+
+// Hat
+// Create the brim of the hat
+polyCylinder -r $brimRadius -h $brimHeight -sx $subdivisions -sy 1 -name "Brim";
+
+// Move the brim to the correct position
+move -r 0 ($brimHeight / 2) 0;
+
+// Create the crown of the hat
+polyCylinder -r $crownRadius -h $crownHeight -sx $subdivisions -sy 1 -name "Crown";
+
+// Move the crown on top of the brim
+move -r 0 ($brimHeight + ($crownHeight / 2)) 0;
+
+// Combine the brim and crown into a single mesh
+select -r "Brim" "Crown";
+polyUnite -ch 1 -name "Hat";
+rotate -10 0 0;
+move 0 20.26 0;
