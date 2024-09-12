@@ -1,0 +1,59 @@
+/* 
+Snowflake script
+Creation options are at the bottom V V V
+*/
+
+proc createSnowflake(int $numMainBranches, int $numSecondaryBranches, float $mainBranchLength, float $mainBranchRadius, float $secondaryBranchLength, float $secondaryBranchRadius, float $secondaryBranchAngle) {
+    string $allBranches[]; // Hold all branches
+
+    // Calculates angle increments for main branches
+    float $angleIncrement = 360.0 / $numMainBranches;
+
+    // Create main branches of snowflake
+    for ($i = 0; $i < $numMainBranches; $i++) {
+        // Create, move, and store a main branch
+        string $mainBranch[] = `polyCylinder -radius $mainBranchRadius -height $mainBranchLength -subdivisionsX 8 -subdivisionsY 1 -subdivisionsZ 1`;
+
+        rotate 0 0 ($i * $angleIncrement);
+        move 0 ($mainBranchLength / 2) 0;
+
+        $allBranches[size($allBranches)] = $mainBranch[0];
+
+        // Add secondary branches to each main branch
+        for ($j = 1; $j <= $numSecondaryBranches; $j++) {
+            // Create, move, and store a secondary branch
+            string $secondaryBranch[] = `polyCylinder -radius $secondaryBranchRadius -height $secondaryBranchLength -subdivisionsX 8 -subdivisionsY 1 -subdivisionsZ 1`;
+
+            float $offset = $mainBranchLength * ($j / ($numSecondaryBranches + 1.0));
+            move 0 $offset 0;
+
+            float $rotationAngle = 90 - $secondaryBranchAngle;
+            rotate 0 0 (($i * $angleIncrement) + $rotationAngle);
+            move 0 ($offset + $secondaryBranchLength / 2) 0;
+
+            $allBranches[size($allBranches)] = $secondaryBranch[0];
+        }
+    }
+
+    // Combine all branches
+    string $combinedSnowflake[] = `polyUnite -constructionHistory 1 $allBranches`;
+    
+    // Clear history and center pivot
+    delete -constructionHistory $combinedSnowflake[0];
+    xform -centerPivots $combinedSnowflake[0];
+    rename $combinedSnowflake[0] "Snowflake";
+}
+
+createSnowflake(7, 2, 6, 0.07, 3, 0.05, 40);
+
+/*
+Legend: createSnowflake(numMainBranches, numSecondaryBranches, mainBranchLength, 
+mainBranchRadius, secondaryBranchLength, secondaryBranchRadius, secondaryBranchAngle)
+
+Simple: createSnowflake(6, 3, 5, 0.1, 2, 0.05, 30);
+
+Note: Spent more minutes then I'd like wondering why -centerPivot wouldn't work the way I'd want.
+Forgot the 's' . Also, this assignemnt killed a little part of my soul... it was fun. Honestly, it doesn't 
+look too much like the types of snowflakes I had in mind, but I wanted this done at a reasonable time.
+At least you can make (kinda) what you'd want. I played around with it, and you can make some stuff.
+*/
