@@ -1,0 +1,49 @@
+////////////
+// Spiral Stairs Generator Lab
+////////////
+proc GenerateStaircase(
+    int $numStairs,           // Number of stairs to create
+    float $stairLength,       // Stair length (depth)
+    float $stairWidth,        // Stair width
+    float $stairHeight,       // Height of each stair
+    float $stairOffset,       // Offset distance from center (pivot point)
+    float $stepHeight,        // Height step for each stair
+    float $stepRotation       // Rotation per step in degrees
+)
+{
+    int $i;
+    string $step[];
+    string $allSteps[];  // Array to store all steps
+
+    for ($i = 0; $i < $numStairs; $i++) {
+        // Create and store a step in $step
+        $step = `polyCube -w $stairWidth -h $stairHeight -d $stairLength`;
+
+        // Move the step along the Y-axis by $i * $stepHeight and offset in Z
+        move -r $stairOffset ($i * $stepHeight) 0;
+
+        // Set the pivot point of the stair to (0, 0, 0)
+        xform -ws -rotatePivot 0 0 0;
+
+        // Rotate each stair step around the Y-axis by $i * $stepRotation
+        rotate -r -os 0 ($i * $stepRotation) 0;
+
+        // Add the current steps to $allSteps
+        $allSteps[$i] = $step[0]; }
+    // End of for
+
+    // Combine all steps into one mesh
+    string $combinedMesh[] = `polyUnite -ch off $allSteps`;
+
+    // Rename the combined mesh to "Spiral_Stair_Lab"
+    rename $combinedMesh[0] "Spiral_Stair_Lab";
+
+    // Delete history
+    delete -ch "Spiral_Stair_Lab";
+}
+
+////////////
+// Parameters: (numStairs, stairLength, stairWidth, stairHeight, stairOffset, stepHeight, stepRotation)
+// Perfered:
+GenerateStaircase(100, 2, 4, 0.5, 5, 0.5, 15);
+// Lab example: GenerateStaircase(20, 8, 3, .5, -6, 4, 25);

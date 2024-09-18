@@ -1,0 +1,45 @@
+////////////
+// Alternate Spiral Stair Generator
+////////////
+proc SpiralStaircase(
+    int $numStairs,           // Number of stairs to make
+    float $stairWidth,        // Stair width
+    float $stairHeight,       // Stair height
+    float $stairDepth,        // Stair depth (length)
+    float $stepRotation       // Step rotation in degrees
+)
+{
+    string $allSteps[];  // Array to store all steps
+    int $i;
+
+    for ($i = 0; $i < $numStairs; $i++) {
+        // Create a step and store
+        string $step[] = `polyCube -ch on -o on -w $stairWidth -h $stairHeight -d $stairDepth`;
+
+        // Move the stair step along the Y-axis by $i times the stair height
+        move -r 0 ($i * $stairHeight) -5;
+
+        // Set the pivot point of the stair to (0, 0, 0)
+        xform -ws -rotatePivot 0 0 0;
+
+        // Rotate each stair step by $i times the $stepRotation value around the Y-axis
+        rotate -r -os 0 ($i * $stepRotation) 0;
+
+        // Add the current step to the array of all steps
+        $allSteps[$i] = $step[0];
+    }
+
+    // Combine all the steps into one mesh
+    string $combinedMesh[] = `polyUnite -ch off -mergeUVSets 1 $allSteps`;
+
+    // Rename
+    rename $combinedMesh[0] "Spiral_Stair";
+
+    // delete history
+    delete -ch "Spiral_Stair";
+}
+
+////////////
+// Perameters: numStairs, stairWidth, stairHeight, stairDepth, stepRotation
+SpiralStaircase(30, 2, 0.5, 4, 15);
+////////////
