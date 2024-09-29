@@ -1,0 +1,106 @@
+////////////
+// Calculator
+////////////
+
+// Addition
+proc float sum(float $input[]) {
+    float $result = 0;
+    for ($i = 0; $i < size($input); $i++) { $result += $input[$i]; }
+    return $result;
+}
+
+// Subtraction
+proc float subtract(float $input[]) {
+    float $result = $input[0];
+    for ($i = 1; $i < size($input); $i++) { $result -= $input[$i]; }
+    return $result;
+}
+
+// Multiplication
+proc float multiply(float $input[]) {
+    float $result = 1;
+    for ($i = 0; $i < size($input); $i++) { $result *= $input[$i]; }
+    return $result;
+}
+
+// Division
+proc float divide(float $input[]) {
+    float $result = $input[0];
+    for ($i = 1; $i < size($input); $i++) {
+        if ($input[$i] != 0) { $result /= $input[$i]; } 
+        else 
+        {   error("Error: Division by zero.");
+            return 0; }
+    }
+    return $result;
+}
+
+// Power/Exponent
+proc float power(float $base, float $exponent) {
+    float $result = `pow $base $exponent`;
+    return $result;
+}
+
+// Mean
+proc float mean(float $input[]) {
+    float $sum = sum($input);
+    float $average = $sum / size($input);
+    return $average;
+}
+
+// Median
+proc float median(float $input[]) {
+    int $n = size($input);
+    float $sortedInput[] = sort($input);
+    float $medianValue;
+
+    if ($n % 2 == 0) { $medianValue = ($sortedInput[$n / 2 - 1] + $sortedInput[$n / 2]) / 2; } 
+    else { $medianValue = $sortedInput[$n / 2]; }
+    return $medianValue;
+}
+
+proc string arrayToString(float $input[]) {
+    string $result = "{";
+    for ($i = 0; $i < size($input); $i++) 
+    {   $result += $input[$i];
+        if ($i < size($input) - 1) { $result += ", "; } // Add commas between numbers
+    }
+    $result += "}";
+    return $result;
+}
+
+// Main:
+global proc mainCalculator() {
+    float $numbers[] = {6, 7, 6};
+    float $baseNum = 2;
+    float $exponent = 3;
+
+    float $sumResult = sum($numbers);
+    float $subResult = subtract($numbers);
+    float $mulResult = multiply($numbers);
+    float $divResult = divide($numbers);
+    float $powResult = power($baseNum, $exponent);
+    float $meanResult = mean($numbers);
+    float $medianResult = median($numbers);
+
+    string $numbersStr = arrayToString($numbers);
+
+    print("Numbers used (in order): " + $numbersStr + "\n");
+    print("Addition: " + $sumResult + "\n");
+    print("Subtraction: " + $subResult + "\n");
+    print("Multiplication: " + $mulResult + "\n");
+    print("Division: " + $divResult + "\n");
+    print("Power (2^3): " + $powResult + "\n");
+    print("Mean: " + $meanResult + "\n");
+    print("Median: " + $medianResult + "\n");
+}
+
+mainCalculator();
+
+/* Note: 
+
+Tried different writing styles (when and how to break up code). 
+
+Might have left some inconcistencies in how the code looks, but everything works.
+
+*/
