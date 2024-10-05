@@ -1,106 +1,244 @@
 ////////////
-// Calculator
+// Calculator Functions
 ////////////
 
 // Addition
-proc float sum(float $input[]) {
+proc float sum(float $input[]) 
+{
     float $result = 0;
-    for ($i = 0; $i < size($input); $i++) { $result += $input[$i]; }
+    for ($value in $input) 
+    {
+        $result += $value;
+    }
+    // End of for
     return $result;
 }
+// End of sum
 
 // Subtraction
-proc float subtract(float $input[]) {
+proc float subtract(float $input[]) 
+{
     float $result = $input[0];
-    for ($i = 1; $i < size($input); $i++) { $result -= $input[$i]; }
+    for ($i = 1; $i < size($input); $i++) 
+    {
+        $result -= $input[$i];
+    }
+    // End of for
     return $result;
 }
+// End of subtract
 
 // Multiplication
-proc float multiply(float $input[]) {
+proc float multiply(float $input[]) 
+{
     float $result = 1;
-    for ($i = 0; $i < size($input); $i++) { $result *= $input[$i]; }
+    for ($value in $input) 
+    {
+        $result *= $value;
+    }
+    // End of for
     return $result;
 }
+// End of multiply
 
 // Division
-proc float divide(float $input[]) {
+proc float divide(float $input[]) 
+{
     float $result = $input[0];
-    for ($i = 1; $i < size($input); $i++) {
-        if ($input[$i] != 0) { $result /= $input[$i]; } 
+    for ($i = 1; $i < size($input); $i++) 
+    {
+        if ($input[$i] != 0) 
+        {
+            $result /= $input[$i];
+        } 
         else 
-        {   error("Error: Division by zero.");
-            return 0; }
+        {
+            error("Error: Division by zero.");
+            return 0;
+        }
+        // End of if else
     }
+    // End of for
     return $result;
 }
+// End of divide
 
 // Power/Exponent
-proc float power(float $base, float $exponent) {
-    float $result = `pow $base $exponent`;
-    return $result;
+proc float power(float $base, float $exponent) 
+{
+    return `pow $base $exponent`;
 }
+// End of power
 
 // Mean
-proc float mean(float $input[]) {
-    float $sum = sum($input);
-    float $average = $sum / size($input);
-    return $average;
+proc float mean(float $input[])
+{
+    return sum($input) / size($input);
 }
+// End of mean
 
 // Median
-proc float median(float $input[]) {
-    int $n = size($input);
+proc float median(float $input[]) 
+{
     float $sortedInput[] = sort($input);
-    float $medianValue;
+    int $n = size($input);
 
-    if ($n % 2 == 0) { $medianValue = ($sortedInput[$n / 2 - 1] + $sortedInput[$n / 2]) / 2; } 
-    else { $medianValue = $sortedInput[$n / 2]; }
-    return $medianValue;
-}
-
-proc string arrayToString(float $input[]) {
-    string $result = "{";
-    for ($i = 0; $i < size($input); $i++) 
-    {   $result += $input[$i];
-        if ($i < size($input) - 1) { $result += ", "; } // Add commas between numbers
+    if ($n % 2 == 0) 
+    {
+        return ($sortedInput[$n / 2 - 1] + $sortedInput[$n / 2]) / 2;
+    } 
+    else 
+    {
+        return $sortedInput[$n / 2];
     }
-    $result += "}";
+    // End of if else
+}
+// End of median
+
+// Round a float to two decimal places
+proc float roundToHundredths(float $value) 
+{
+    return floor(($value * 100) + 0.5) / 100;
+}
+// End of roundToHundredths
+
+////////////
+// Utility Function for String Formatting
+////////////
+
+// Formats the array with an operator between elements, e.g., "6 + 7 + 6"
+proc string formatArrayWithOperator(float $input[], string $operator) 
+{
+    string $result = "";
+    for ($i = 0; $i < size($input); $i++) 
+    {
+        $result += $input[$i];
+        if ($i < size($input) - 1) 
+        {
+            $result += " " + $operator + " ";
+        }
+        // End of if
+    }
+    // Endo of for
     return $result;
 }
+// End of formatArrayWithOperator
 
-// Main:
-global proc mainCalculator() {
-    float $numbers[] = {6, 7, 6};
-    float $baseNum = 2;
-    float $exponent = 3;
+// Formats the array with commas and "and" for "mean" and "median" cases
+proc string formatArrayWithCommas(float $input[]) 
+{
+    int $size = size($input);
+    string $formattedString = "";
 
-    float $sumResult = sum($numbers);
-    float $subResult = subtract($numbers);
-    float $mulResult = multiply($numbers);
-    float $divResult = divide($numbers);
-    float $powResult = power($baseNum, $exponent);
-    float $meanResult = mean($numbers);
-    float $medianResult = median($numbers);
-
-    string $numbersStr = arrayToString($numbers);
-
-    print("Numbers used (in order): " + $numbersStr + "\n");
-    print("Addition: " + $sumResult + "\n");
-    print("Subtraction: " + $subResult + "\n");
-    print("Multiplication: " + $mulResult + "\n");
-    print("Division: " + $divResult + "\n");
-    print("Power (2^3): " + $powResult + "\n");
-    print("Mean: " + $meanResult + "\n");
-    print("Median: " + $medianResult + "\n");
+    for ($i = 0; $i < $size; $i++) 
+    {
+        $formattedString += $input[$i];
+        if ($i < $size - 1) 
+        {
+            if ($size == 2) 
+            {
+                $formattedString += " and ";
+            }
+            else
+            {
+                $formattedString += ($i == $size - 2) ? ", and " : ", ";
+            }
+            // End of if else
+        }
+        // End of if
+    }
+    // End of for
+    return $formattedString;
 }
+// End of formatArrayWithCommas
+
+////////////
+// Calculator Function
+////////////
+
+global proc float calculator(float $numbers[], string $operation) 
+{
+    float $result;
+    string $formattedString;
+    string $operatorSymbol;
+    string $outputMessage = "";
+
+    switch ($operation) 
+    {
+        case "add":
+            $result = sum($numbers);
+            $operatorSymbol = "+";
+            break;
+        case "subtract":
+            $result = subtract($numbers);
+            $operatorSymbol = "-";
+            break;
+        case "multiply":
+            $result = multiply($numbers);
+            $operatorSymbol = "*";
+            break;
+        case "divide":
+            $result = divide($numbers);
+            $operatorSymbol = "/";
+            break;
+        case "mean":
+            $result = mean($numbers);
+            $outputMessage = "The mean of " + formatArrayWithCommas($numbers) + " is ";
+            break;
+        case "median":
+            $result = median($numbers);
+            $outputMessage = "The median of " + formatArrayWithCommas($numbers) + " is ";
+            break;
+        case "exponent":
+            if (size($numbers) != 2) 
+            {
+                error("Error: Exponentiation requires exactly two numbers: base and exponent.");
+                return 0;
+            }
+            // End of if
+            $result = power($numbers[0], $numbers[1]);
+            $outputMessage = $numbers[0] + "^" + $numbers[1] + " = ";
+            break;
+        default:
+            error("Error: Invalid operation. Choose from 'add', 'subtract', 'multiply', 'divide', 'mean', 'median', or 'exponent'.");
+            return 0;
+    }
+    // End of switch
+
+    if ($operation == "mean" || $operation == "median" || $operation == "exponent") 
+    { 
+        print($outputMessage + roundToHundredths($result) + "\n"); 
+    } 
+    else 
+    {
+        $formattedString = formatArrayWithOperator($numbers, $operatorSymbol);
+        print($formattedString + " = " + roundToHundredths($result) + "\n");
+    }
+    // End of if else
+    return $result;
+}
+// End of calculator
+
+////////////
+// Main Function to Call Calculator
+////////////
+
+global proc mainCalculator() 
+{
+    float $numbers[] = {1, 3, 3};   // Array of numbers (base and exponent for exponentiation)
+    string $operation = "divide"; // Can be add, subtract, exponent, multiply, divide, mean, and median
+    
+    calculator($numbers, $operation);
+} 
+// End of mainCalculator
 
 mainCalculator();
 
-/* Note: 
-
-Tried different writing styles (when and how to break up code). 
-
-Might have left some inconcistencies in how the code looks, but everything works.
-
+/*
+Note: I recently went to a Mel/Python/C# lecture at BYU, and I got super inspired.
+One, I got to overlook some old code, and realized there was some things I used to do
+and I really liked the look of it (like how to seperate operations, and jazz), and two,
+I saw some really cool things. This is where error checks and switch use came from. After that,
+it was a lot of back and forth between documentation, past assignments, and AI to help optimize
+some stuff. 
 */
