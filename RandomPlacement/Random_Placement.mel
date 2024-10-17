@@ -1,0 +1,121 @@
+////////////
+// Random Placement and UI Lab
+////////////
+global proc randomPlacement(int $numDuplicates, float $minX, float $maxX, float $minY, float $maxY, float $minZ, float $maxZ)
+{
+    string $selectedObjects[] = `ls -sl`;
+
+    if (size($selectedObjects) == 0) 
+    {
+        print("No objects selected.\n");
+        return;
+    }
+
+    for ($obj in $selectedObjects)
+    {
+        // Create duplicates
+        for ($i = 0; $i < $numDuplicates; $i++)
+        {
+            string $newObj[] = `duplicate $obj`;
+            string $newObjName = $newObj[0];
+
+            // Generate random positions within range
+            float $randomX = rand($minX, $maxX);
+            float $randomY = rand($minY, $maxY);
+            float $randomZ = rand($minZ, $maxZ);
+
+            move $randomX $randomY $randomZ $newObjName;
+        }
+    }
+}
+
+global proc randomPlacementUI()
+{
+    if (`window -exists randomPlacementWindow`) 
+    {
+        deleteUI randomPlacementWindow;
+    }
+
+    window -title "Random Placement Generator" -widthHeight 100 130 randomPlacementWindow;
+
+    columnLayout -adjustableColumn true -columnAlign "center";
+
+    // Number of duplicates field
+    text -label "Number of Duplicates:";
+    intField -minValue 1 -value 1 numDuplicatesField;
+
+
+    // X-axis range fields
+    text -label "X-Axis Range:";
+
+    rowLayout -numberOfColumns 3;
+    text -label "Max Range: ";
+    floatField -value 10.0 -width 70 maxXField;
+    floatSlider -min -10.0 -max 10.0 -value 10.0 -step 0.1 -dragCommand "setFloatFieldValue maxXField" maxXSlider;
+    setParent ..;
+
+    rowLayout -numberOfColumns 3;
+    text -label "Min Range: ";
+    floatField -value 10.0 -width 70 minXField;
+    floatSlider -min -10.0 -max 10.0 -value -10.0 -step 0.1 -dragCommand "setFloatFieldValue minXField" minXSlider;
+    setParent ..;
+
+    // Y-axis range fields
+    text -label "Y-Axis Range:";
+
+    rowLayout -numberOfColumns 3;
+    text -label "Max Range: ";
+    floatField -value 10.0 -width 70 maxYField;
+    floatSlider -min -10.0 -max 10.0 -value 10.0 -step 0.1 -dragCommand "setFloatFieldValue maxYField" maxYSlider;
+    setParent ..;
+
+    rowLayout -numberOfColumns 3;
+    text -label "Min Range: ";
+    floatField -value -10.0 -width 70 minYField;
+    floatSlider -min -10.0 -max 10.0 -value -10.0 -step 0.1 -dragCommand "setFloatFieldValue minYField" minYSlider;
+    setParent ..;
+
+    // Z-axis range fields with floatField next to floatSlider
+    text -label "Z-Axis Range:";
+
+    rowLayout -numberOfColumns 3;
+    text -label "Max Range: ";
+    floatField -value 10.0 -width 70 maxZField;
+    floatSlider -min -10.0 -max 10.0 -value 10.0 -step 0.1 -dragCommand "setFloatFieldValue maxZField" maxZSlider;
+    setParent ..;
+
+    rowLayout -numberOfColumns 3;
+    text -label "Min Range: ";
+    floatField -value -10.0 -width 70 minZField;
+    floatSlider -min -10.0 -max 10.0 -value -10.0 -step 0.1 -dragCommand "setFloatFieldValue minZField" minZSlider;
+    setParent ..;
+
+    // Button for executeRandomPlacement
+    button -label "Generate Random Placement" -command "executeRandomPlacement()";
+
+    showWindow randomPlacementWindow;
+}
+
+global proc setFloatFieldValue(string $fieldName)
+{
+    string $sliderName = substituteAllString($fieldName, "Field", "Slider");
+
+    float $sliderValue = `floatSlider -query -value $sliderName`;
+    
+    floatField -edit -value $sliderValue $fieldName;
+}
+
+global proc executeRandomPlacement()
+{
+    int $numDuplicates = `intField -query -value numDuplicatesField`;
+    float $minX = `floatField -query -value minXField`;
+    float $maxX = `floatField -query -value maxXField`;
+    float $minY = `floatField -query -value minYField`;
+    float $maxY = `floatField -query -value maxYField`;
+    float $minZ = `floatField -query -value minZField`;
+    float $maxZ = `floatField -query -value maxZField`;
+
+    randomPlacement($numDuplicates, $minX, $maxX, $minY, $maxY, $minZ, $maxZ);
+}
+
+randomPlacementUI();
