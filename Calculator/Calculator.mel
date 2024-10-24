@@ -258,6 +258,10 @@ global proc float sum(float $input[])
 calculatorUI();
 
 /*
+Usage: Send code to Maya (Either from something like Visual Studio like I did, or just put all of this
+into Maya itself), and run calculatorUI();. There is no icon, only code.
+
+
 Note: This assignment killed me a little bit. Like, holy crap, median can die in a hole. I don't know why,
 but it just didn't want to work with my UI. Either way, it is what it is, and it is DONE! Lovely stuff,
 just suprisingly infuriating.
