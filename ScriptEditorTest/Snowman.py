@@ -51,6 +51,7 @@ for i in range(-2, 3):
     cmds.polySphere(r=0.25, sx=subdivisions, sy=subdivisions, name="Mouth_Pt")
     y_pos = 18.5 + 0.1 * (i ** 2)
     cmds.move(i * 0.5, y_pos, 2 - abs(i) * 0.1)
+# End of for
 
 # Add buttons on the chest
 cmds.polySphere(r=0.6, sx=subdivisions, sy=subdivisions, name="Button1")
